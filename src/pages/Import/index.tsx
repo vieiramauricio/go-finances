@@ -19,23 +19,32 @@ interface FileProps {
 }
 
 const Import: React.FC = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<FileProps[] | any>([]);
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    const data = new FormData();
 
-    // TODO
+    const { file, name } = uploadedFiles[0];
+
+    data.append('file', file, name);
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+      history.push('/');
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const uploadedFilesMap = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    }));
+
+    setUploadedFiles(uploadedFilesMap);
   }
 
   return (
